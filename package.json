@@ -1,0 +1,31 @@
+{
+  "name": "global-news-aggregator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Production-Quality Global News Aggregator in React and Node.js",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,magenta\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm --workspace=server run dev",
+    "dev:client": "npm --workspace=client run dev",
+    "build": "npm --workspace=server run build && npm --workspace=client run build",
+    "test": "npm --workspace=server run test",
+    "start": "npm --workspace=server run start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "keywords": [
+    "news",
+    "aggregator",
+    "react",
+    "vite",
+    "express",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT"
+}
