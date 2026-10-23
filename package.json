@@ -12,6 +12,8 @@
     "dev:server": "npm --workspace=server run dev",
     "dev:client": "npm --workspace=client run dev",
     "build": "npm --workspace=server run build && npm --workspace=client run build",
+    "build:client": "npm --workspace=client run build",
+    "build:server": "npm --workspace=server run build",
     "test": "npm --workspace=server run test",
     "start": "npm --workspace=server run start"
   },

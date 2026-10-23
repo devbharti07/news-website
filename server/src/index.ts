@@ -13,7 +13,20 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const rawFrontendUrls = process.env.FRONTEND_URL || 'http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000';
+const allowedOrigins = rawFrontendUrls
+  .split(',')
+  .map(u => u.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+
+function isOriginAllowed(origin: string | undefined): boolean {
+  if (!origin) return true; // allow server-to-server, health checks, curl
+  const normalized = origin.trim().replace(/\/+$/, '');
+  if (allowedOrigins.includes(normalized)) return true;
+  if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(normalized)) return true;
+  if (/^https:\/\/[a-zA-Z0-9_-]+\.vercel\.app$/.test(normalized)) return true;
+  return false;
+}
 
 // 1. Security Headers
 app.use(
@@ -27,10 +40,11 @@ app.use(
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1') || origin === FRONTEND_URL) {
+      if (isOriginAllowed(origin)) {
         callback(null, true);
       } else {
-        callback(null, true);
+        console.warn(`[CORS Blocked] Origin not allowed: ${origin}`);
+        callback(new Error(`CORS origin not allowed: ${origin}`));
       }
     },
     methods: ['GET', 'POST', 'OPTIONS'],

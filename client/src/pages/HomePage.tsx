@@ -38,6 +38,7 @@ export function HomePage() {
     data: newsData,
     isLoading,
     isError,
+    error,
     refetch,
     isFetching,
   } = useQuery({
@@ -80,11 +81,15 @@ export function HomePage() {
   }
 
   if (isError || articles.length === 0) {
+    const errorMsg = error instanceof Error ? error.message : undefined;
     return (
       <div className="max-w-7xl mx-auto px-4 py-16">
         <EmptyState
-          title="Could not load latest stories"
-          description="We encountered an issue fetching reports from our external news network. Please click below to retry."
+          title={errorMsg?.includes('VITE_API_BASE_URL') ? 'Configuration Required' : 'Could not load latest stories'}
+          description={
+            errorMsg ||
+            'We encountered an issue fetching reports from our external news network. Please click below to retry.'
+          }
           actionText={isFetching ? 'Connecting...' : 'Retry Connection'}
           onAction={() => refetch()}
         />
